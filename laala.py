@@ -8,16 +8,17 @@ import sys
 init()
 
 
-
+DATA_DIR = "."
+KEY_FILE = "api.key"
 
 if "boring" in sys.argv:
-    with open('boring_mode.txt', 'r') as file:
+    with open(f'{DATA_DIR}/boring_mode.txt', 'r') as file:
         system_desu = file.read().strip()
 if "big" in sys.argv:
-    with open('big_text.txt', 'r', encoding='utf-8') as file:
+    with open(f'{DATA_DIR}/big_text.txt', 'r', encoding='utf-8') as file:
         system_desu = file.read().strip()
 else:
-    with open('laala_prompt.txt', 'r') as file:
+    with open(f'{DATA_DIR}/laala_prompt.txt', 'r') as file:
         system_desu = file.read().strip()
 
 #def debugMode(history_token_size : int) -> None:
@@ -133,7 +134,7 @@ class LAALA_UI:
         self.convoLoop(MessageHistoryStore)
 
 
-with open('api.key', 'r') as file:
+with open(KEY_FILE, 'r') as file:
     priTicket = file.read().strip()
 openai.api_key = str(priTicket)
 
