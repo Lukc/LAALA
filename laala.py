@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import openai
 from transformers import GPT2TokenizerFast
 from colorama import init, Fore, Back, Style
