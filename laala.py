@@ -1,25 +1,38 @@
 #!/usr/bin/env python3
 
-import openai
-from transformers import GPT2TokenizerFast
 from colorama import init, Fore, Back, Style
 from typing import List
 import sys
-init()
-
+from argparse import ArgumentParser
 
 DATA_DIR = "."
 KEY_FILE = "api.key"
+INITIAL_DATA = "laala_prompt"
 
-if "boring" in sys.argv:
-    with open(f'{DATA_DIR}/boring_mode.txt', 'r') as file:
-        system_desu = file.read().strip()
-if "big" in sys.argv:
-    with open(f'{DATA_DIR}/big_text.txt', 'r', encoding='utf-8') as file:
-        system_desu = file.read().strip()
-else:
-    with open(f'{DATA_DIR}/laala_prompt.txt', 'r') as file:
-        system_desu = file.read().strip()
+init()
+
+def pink(s):
+    return f'\033[38;5;206m{s}\033[00m'
+
+parser = ArgumentParser(epilog=pink("Kashikoma!"))
+parser.add_argument("--mode", "-m",
+    help="what mode to run LAALA as",
+    required=False)
+parser.add_argument("--api-key-file", "-k",
+	help="path to a file that contains an OpenAI key")
+
+args = parser.parse_args()
+
+if args.mode:
+    INITIAL_DATA = args.mode
+if args.api_key_file:
+    KEY_FILE = args.api_key_file
+
+with open(f'{DATA_DIR}/{INITIAL_DATA}.txt', 'r', encoding='utf-8') as file:
+    system_desu = file.read().strip()
+
+import openai
+from transformers import GPT2TokenizerFast
 
 #def debugMode(history_token_size : int) -> None:
 #    if "debug" in sys.argv:
