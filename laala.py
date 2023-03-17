@@ -21,7 +21,13 @@ parser.add_argument("--mode", "-m",
     help="what mode to run LAALA as",
     required=False)
 parser.add_argument("--api-key-file", "-k",
-	help="path to a file that contains an OpenAI key")
+    help="path to a file that contains an OpenAI key")
+parser.add_argument("--pretend", "-p",
+    action="store_true",
+    help="do not actually use OpenAI, useful for UI tests")
+parser.add_argument("--qt", "-q",
+    action="store_true",
+    help="tries to start the experimental Qt GUI instead of the REPL prompt")
 
 args = parser.parse_args()
 
@@ -29,6 +35,8 @@ if args.mode:
     INITIAL_DATA = args.mode
 if args.api_key_file:
     KEY_FILE = args.api_key_file
+DEBUG_MODE = args.pretend
+USE_GUI = args.qt
 
 with open(f'{DATA_DIR}/{INITIAL_DATA}.txt', 'r', encoding='utf-8') as file:
     system_desu = file.read().strip()
@@ -166,31 +174,71 @@ class LAALA_UI:
         return self.prompt
 
     def convoLoop(self, MessageHistoryStore):
-        MessageHistoryStore.makeRequestToSend(self.askLAALA())
-        self.printLAALA(MessageHistoryStore.receiveResponse())
+        if DEBUG_MODE:
+            self.askLAALA()
+            self.printLAALA("<response unavailable>")
+        else:
+            MessageHistoryStore.makeRequestToSend(self.askLAALA())
+            self.printLAALA(MessageHistoryStore.receiveResponse())
         self.convoLoop(MessageHistoryStore)
 
     def __init__(self, MessageHistoryStore):
-        MessageHistoryStore.makeRequestToSend(system_desu)
-        self.printLAALA(MessageHistoryStore.receiveResponse())
+        if not DEBUG_MODE:
+            MessageHistoryStore.makeRequestToSend(system_desu)
+            self.printLAALA(MessageHistoryStore.receiveResponse())
+
         self.convoLoop(MessageHistoryStore)
 
 
 with open(KEY_FILE, 'r') as file:
     priTicket = file.read().strip()
-openai.api_key = str(priTicket)
+
+if not DEBUG_MODE:
+    openai.api_key = str(priTicket)
 
 def inputYourPrompt():
     prompt = input(Fore.CYAN + "You: ")
     return prompt
 
+if USE_GUI:
+    from PySide6.QtCore import *
+    from PySide6.QtGui import *
+    from PySide6.QtQml import *
 
+    if not DEBUG_MODE:
+        MessageHistoryStore = MessageHistoryStore()
 
-print("## LAALA ONLINE c: ##\n")
+    class LaalaQt(QObject):
+        historyUpdated = Signal(list, arguments=['newHistory'])
 
-MessageHistoryStore = MessageHistoryStore()
-LAALA = LAALA_UI(MessageHistoryStore)
+        def __init__(self):
+            super().__init__()
 
+        @Slot(str, result=str)
+        def ask(self, arg):
+            if DEBUG_MODE:
+                answer = "BLEHHHH"
+            else:
+                MessageHistoryStore.makeRequestToSend(arg)
+                answer = MessageHistoryStore.receiveResponse()
+
+            return answer
+
+    app = QGuiApplication(sys.argv)
+
+    engine = QQmlApplicationEngine()
+    engine.quit.connect(app.quit)
+    engine.load('main.qml')
+
+    laalaQt = LaalaQt()
+    engine.rootObjects()[0].setProperty('laala', laalaQt)
+
+    sys.exit(app.exec())
+else:
+    print("## LAALA ONLINE c: ##\n")
+
+    MessageHistoryStore = MessageHistoryStore()
+    LAALA = LAALA_UI(MessageHistoryStore)
 
 #MessageHistoryStore.newEntry("bingle", "user")
 '''while True:
