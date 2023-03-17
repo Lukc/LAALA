@@ -209,8 +209,6 @@ if USE_GUI:
         MessageHistoryStore = MessageHistoryStore()
 
     class LaalaQt(QObject):
-        historyUpdated = Signal(list, arguments=['newHistory'])
-
         def __init__(self):
             super().__init__()
 
@@ -228,7 +226,7 @@ if USE_GUI:
 
     engine = QQmlApplicationEngine()
     engine.quit.connect(app.quit)
-    engine.load('main.qml')
+    engine.load('qml/main.qml')
 
     laalaQt = LaalaQt()
     engine.rootObjects()[0].setProperty('laala', laalaQt)
