@@ -25,40 +25,49 @@ RowLayout {
 		input.text = "" // clears the field
 	}
 
-	TextEdit {
-		id: input
-
+	Rectangle {
 		Layout.fillWidth: true
 		Layout.minimumHeight: 80
 
-		font.pixelSize: 24
-		color: "#EEEEEE"
+		Layout.preferredHeight: input.implicitHeight
 
-		verticalAlignment: Qt.AlignVCenter
+		color: "#444444"
 
-		property bool shiftPressed: false
+		TextEdit {
+			id: input
 
-		Keys.onPressed: function(event) {
-			if (event.key == Qt.Key_Shift) {
-				shiftPressed = true
+			selectByMouse: true
+			anchors.fill: parent
+
+			font.pixelSize: 24
+			color: "#EEEEEE"
+
+			verticalAlignment: Qt.AlignVCenter
+
+			property bool shiftPressed: false
+
+			Keys.onPressed: function(event) {
+				if (event.key == Qt.Key_Shift) {
+					shiftPressed = true
+				}
 			}
-		}
-		Keys.onReleased: function(event) {
-			if (event.key == Qt.Key_Shift) {
-				shiftPressed = false
-			}
-		}
-
-		Keys.onReturnPressed: function(event) {
-			if (shiftPressed) {
-				var oldCursor = cursorPosition
-				text = text + "\n"
-				cursorPosition = oldCursor + 1
-			} else {
-				inputArea.letsGo()
+			Keys.onReleased: function(event) {
+				if (event.key == Qt.Key_Shift) {
+					shiftPressed = false
+				}
 			}
 
-			event.accepted = true
+			Keys.onReturnPressed: function(event) {
+				if (shiftPressed) {
+					var oldCursor = cursorPosition
+					text = text + "\n"
+					cursorPosition = oldCursor + 1
+				} else {
+					inputArea.letsGo()
+				}
+
+				event.accepted = true
+			}
 		}
 	}
 

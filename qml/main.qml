@@ -4,6 +4,8 @@ import QtQuick.Layouts 2.15
 
 ApplicationWindow {
 	id: application
+	flags: Qt.Window | Qt.CustomizeWindowHints | Qt.WindowMaximizeButtonHint
+
     visible: true
     width: 600
 	height: 720
@@ -12,6 +14,58 @@ ApplicationWindow {
     title: "LAALA"
 
 	color: "#333333"
+
+	WindowResizeAreas {
+		anchors.fill: parent
+	}
+
+	Rectangle {
+		id: topWindowBorder
+
+		height: 32
+
+		color: "#666666"
+
+		MouseArea {
+			anchors.fill: parent
+
+			pressAndHoldInterval: 10
+			acceptedButtons: Qt.LeftButton
+			onPressAndHold: {
+				application.startSystemMove()
+			}
+		}
+
+		anchors {
+			left: parent.left
+			right: parent.right
+		}
+
+		RowLayout {
+			anchors.fill: parent
+
+			Text {
+				text: "Laala"
+				color: "#EEEEEE"
+				font.pixelSize: 24
+			}
+
+			Item {
+				Layout.fillHeight: true
+				Layout.fillWidth: true
+				height: 1
+			}
+
+			Button {
+				Layout.fillHeight: true
+				width: height
+				text: "×"
+				font.pixelSize: 24
+				onClicked: Qt.quit()
+				flat: true
+			}
+		}
+	}
 
 	ListView {
 		id: historyArea
@@ -27,7 +81,7 @@ ApplicationWindow {
 		anchors {
 			left: parent.left
 			right: parent.right
-			top: parent.top
+			top: topWindowBorder.bottom
 			bottom: inputArea.top
 		}
 
