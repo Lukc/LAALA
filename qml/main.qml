@@ -97,6 +97,7 @@ ApplicationWindow {
 					Layout.alignment: Qt.AlignTop
 					from: modelData.from
 					message: modelData.message
+					maximumWidth: historyArea.width
 				}
 			}
 

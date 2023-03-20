@@ -42,6 +42,7 @@ RowLayout {
 			font.pixelSize: 24
 			color: "#EEEEEE"
 
+			wrapMode: TextInput.WordWrap
 			verticalAlignment: Qt.AlignVCenter
 
 			property bool shiftPressed: false

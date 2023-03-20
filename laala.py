@@ -2,6 +2,7 @@
 
 from colorama import init, Fore, Back, Style
 from typing import List
+import random
 import sys
 from argparse import ArgumentParser
 import tiktoken
@@ -215,7 +216,10 @@ if USE_GUI:
         @Slot(str, result=str)
         def ask(self, arg):
             if DEBUG_MODE:
-                answer = "BLEHHHH"
+                if random.randint(1, 2) == 1:
+                    answer = "BLEHHHH aeplide aea npdlea eaép eaépne aep népea éea pneap naépe aépne aep eaépdet anpe ae ape dtapéne pe aépet anépe neadpe éapled anpeadtp eaénpeape aée pea eaép eldanéenéap dapnie aéped a"
+                else:
+                    answer = "BLEHHHH"
             else:
                 MessageHistoryStore.makeRequestToSend(arg)
                 answer = MessageHistoryStore.receiveResponse()

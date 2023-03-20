@@ -1,15 +1,27 @@
 import QtQuick 2.15
 
-Rectangle {
+Item {
 	id: widget
 
 	property string from: "user"
 	property string message: ""
+	property int maximumWidth: 999
 
-	color:
-		from == "user" ? Qt.darker("skyblue", 1.5) :
-		from == "laala" ? Qt.darker("salmon", 1.5) :
-		"red"
+	Rectangle {
+		color: "olive"
+		anchors.fill: parent
+	}
+
+	Rectangle {
+		id: background
+
+		color:
+			from == "user" ? Qt.darker("skyblue", 1.5) :
+			from == "laala" ? Qt.darker("salmon", 1.5) :
+			"red"
+
+		anchors.fill: text
+	}
 
 	TextInput {
 		id: text
@@ -21,6 +33,9 @@ Rectangle {
 		selectByMouse: true
 
 		color: "#EEEEEE"
+
+		wrapMode: TextInput.WordWrap
+		width: Math.min(implicitWidth, parent.maximumWidth)
 	}
 
 	height: text.height
